@@ -35,26 +35,8 @@ http://59.110.164.254:8066/login.html  admin/admin
 # 开发手册  
  [https://www.kancloud.cn/owenwangwen/open-capacity-platform/content](https://www.kancloud.cn/owenwangwen/open-capacity-platform/content)
 
-### 欢迎进群（大佬云集）
-
-<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=4eb3e891564dba87ff097d2ca403bf8c2ceb9244f198692feda5d0dd424b9457"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="ocp&amp;cp微服务" title="ocp&amp;cp微服务"></a>  
-
-<table>
-	<tr>
-            <td><img src=https://images.gitee.com/uploads/images/2019/1209/121109_59a8822c_869801.png "屏幕截图.png"" />
-			<td><img src=https://images.gitee.com/uploads/images/2019/1209/121142_1f491d9b_869801.png "屏幕截图.png"" />
-			<td><img src=https://images.gitee.com/uploads/images/2020/0401/194112_aa2542bd_869801.png "屏幕截图.png" />	
-			<td><img src=https://images.gitee.com/uploads/images/2020/0518/105108_51d550de_869801.png "屏幕截图.png"" />					
-	</tr>
-</table>
 
 # 技术介绍
-<table>
-	<tr>
-		<td><img src="https://images.gitee.com/uploads/images/2020/0403/163537_aed5c59f_869801.png "屏幕截图.png"></td>
-		<td><img src="https://images.gitee.com/uploads/images/2020/0416/031815_7fa159b2_1441068.png "屏幕截图.png"></td>
-    </tr>
-</table>
 
 # **功能介绍** 
 - 统一安全认证中心
@@ -90,36 +72,7 @@ http://59.110.164.254:8066/login.html  admin/admin
    
 ## 代码结构  
     
-![输入图片说明](https://images.gitee.com/uploads/images/2019/1017/224252_368047c9_869801.png "屏幕截图.png")
 
-## 能力开放管理平台   
-
-<table>
-	<tr>
-        <td><img src=https://images.gitee.com/uploads/images/2019/0330/112405_4b826028_869801.png "屏幕截图.png"/></td>
-        <td><img src=https://images.gitee.com/uploads/images/2019/0908/215719_7280e0a7_869801.png "屏幕截图.png"/></td>
-        <td><img src=https://images.gitee.com/uploads/images/2019/0908/215805_ccc6f047_869801.png "屏幕截图.png"/></td>
-        <td><img src=https://images.gitee.com/uploads/images/2019/0908/215849_3579d1f2_869801.png "屏幕截图.png"/></td>
-    </tr>
-    <tr>
-        <td><img src=https://images.gitee.com/uploads/images/2019/0908/215938_54aac61f_869801.png "屏幕截图.png"/></td>
-        <td><img src=https://images.gitee.com/uploads/images/2019/0908/220014_980f9120_869801.png "屏幕截图.png"/></td>
-        <td><img src=https://images.gitee.com/uploads/images/2019/0908/220042_ecb2e2f9_869801.png "屏幕截图.png"/></td>
-        <td><img src=https://images.gitee.com/uploads/images/2019/0908/220109_a46454f2_869801.png "屏幕截图.png"/></td>
-    </tr>
-    <tr>
-        <td><img src=https://images.gitee.com/uploads/images/2019/0908/220255_2cca26da_869801.png "屏幕截图.png"/></td>
-        <td><img src=https://images.gitee.com/uploads/images/2019/0908/220334_eb7e8ccc_869801.png "屏幕截图.png"/></td>
-		<td><img src=https://images.gitee.com/uploads/images/2019/0908/220403_d8941a88_869801.png "屏幕截图.png" /></td>
-        <td><img src=https://images.gitee.com/uploads/images/2019/0908/220448_3e4ec4f0_869801.png "屏幕截图.png"/></td>
-    </tr>
-	<tr>
-		<td><img src=https://images.gitee.com/uploads/images/2019/0908/220535_058f4e5c_869801.png "屏幕截图.png"/></td>
-		<td><img src=https://images.gitee.com/uploads/images/2020/0306/151908_30cf8003_869801.png "屏幕截图.png""/></td>
-		<td><img src="https://images.gitee.com/uploads/images/2019/0329/212515_6b74c76a_869801.png "屏幕截图.png"/></td>
-        <td><img src=https://images.gitee.com/uploads/images/2019/0731/144404_6e9f86e3_869801.png "屏幕截图.png"/></td>
-    </tr>
-</table>
 
 # 容器化部署     
 <table>
