@@ -54,7 +54,7 @@ objects:
   groupNames: null
   kind: RoleBinding
   metadata:
-    name: default_admin33
+    name: default_admin-opencapacity1
   roleRef:
     name: admin
   subjects:
@@ -69,7 +69,7 @@ objects:
     labels:
       app: cicd-pipeline
       name: cicd-pipeline
-    name: brewary33-pipeline
+    name: opencapacity1-pipeline
   spec:
     triggers:
       - type: GitHub
@@ -100,8 +100,7 @@ objects:
             stages {
               stage('Build App') {
                 steps {
-                  git branch: 'iteration-3', url: 'http://gogs:3000/gogs/brewery-33.git'
-                  sh "${mvnCmd} -N install -DskipTests=true"
+                  git branch: 'iteration-3', url: 'http://gogs:3000/gogs/open-capacity-f.git'                
                   sh "${mvnCmd} clean install -DskipTests=true"
                 }
               }
@@ -125,7 +124,7 @@ objects:
               }**/
               stage('Build Image') {
                 steps {
-                  sh "cd /extras/apache-artemis && ${mvnCmd} -Dfabric8.mode=kubernetes clean fabric8:deploy"
+                  //sh "cd /extras/apache-artemis && ${mvnCmd} -Dfabric8.mode=kubernetes clean fabric8:deploy"
                   script {
                     openshift.withCluster() {
                       openshift.withProject(env.DEV_PROJECT) {
@@ -147,7 +146,7 @@ objects:
     labels:
       app: cicd-pipeline
       role: jenkins-slave
-    name: jenkins-slaves33
+    name: jenkins-slaves-opencapacity1
   data:
     maven-template: |-
       <org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
@@ -223,7 +222,7 @@ objects:
 - apiVersion: batch/v1
   kind: Job
   metadata:
-    name: cicd-demo-installer33
+    name: cicd-installer-opencapacity1
   spec:
     activeDeadlineSeconds: 400
     completions: 1
@@ -290,9 +289,9 @@ objects:
 
             cat <<EOF > /tmp/data.json
             {
-              "clone_addr": "https://github.com/woyaofuwu/brewery.git",
+              "clone_addr": "https://github.com/woyaofuwu/open-capacity-f.git",
               "uid": 1,
-              "repo_name": "brewery-33"
+              "repo_name": "open-capacity-f"
             }
             EOF
 
