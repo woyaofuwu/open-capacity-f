@@ -1,0 +1,43 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewBuild
+  creationTimestamp: '2020-07-15T03:04:59Z'
+  labels:
+    build: tasks
+  name: tasks
+  namespace: dev-andrew
+  resourceVersion: '1378513'
+  selfLink: /apis/build.openshift.io/v1/namespaces/dev-andrew/buildconfigs/tasks
+  uid: f80c3386-c647-11ea-9c9a-06e31eac1726
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'tasks:latest'
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    binary: {}
+    type: Binary
+  strategy:
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        name: 'redhat-openjdk18-openshift:1.2'
+        namespace: openshift
+    type: Source
+  successfulBuildsHistoryLimit: 5
+  triggers:
+    - github:
+        secret: pihAT7aWt_BjQEcTcdHs
+      type: GitHub
+    - generic:
+        secret: gvrtfeSwphlcYqAgah5R
+      type: Generic
+status:
+  lastVersion: 2

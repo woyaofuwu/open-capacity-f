@@ -12,12 +12,7 @@ pipeline {
         sh "${mvnCmd} install package -DskipTests=true"
       }
     }
-    stage('Test') {
-      steps {
-        sh "${mvnCmd} test"
-        step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
-      }
-    }
+    
    /** stage('Code Analysis') {
       steps {
         script {
@@ -32,7 +27,13 @@ pipeline {
     }**/
     stage('Build api-gateway Image') {
       steps {
-        sh " dir && cp api-gateway/target/api-gateway.jar api-gateway/target/ROOT.jar"
+        //sh "pwd  && oc delete all -l build=api-gateway -n ${DEV_PROJECT}"
+        //sh "oc delete bc,dc,svc,route,is -l app=api-gateway -n ${DEV_PROJECT}"
+        //sh "oc new-app --name api-gateway --strategy docker --from-file=api-gateway/Dockerfile -n ${DEV_PROJECT}" 
+        //sh " cd api-gateway/target/ && export jarpath=`pwd` && ${jarpath}"
+        //sh "cp api-gateway/target/api-gateway.jar  /tmp/api-gateway.jar && chmod -R g=u /tmp/api-gateway.jar"
+        //sh "pwd && cd api-gateway/target/ && pwd && dir  && oc new-build --strategy=docker --dockerfile='FROM   registry.access.redhat.com/ubi8/ubi:8.0  \n ENV	JAVA_OPTIONS -Xmx512m \n RUN  whoami && pwd && dir && yum install -y --disableplugin=subscription-manager java-1.8.0-openjdk-headless && yum clean all --disableplugin=subscription-manager -y &&   mkdir -p /opt/app-root/bin   \n  ADD  /tmp/api-gateway.jar /opt/app-root/bin/ \n COPY  run-app.sh /opt/app-root/bin/ \n RUN   chgrp -R 0 /opt/app-root &&  chmod -R g=u /opt/app-root \n  EXPOSE 8080  \n USER  1001 \n  CMD   /opt/app-root/bin/run-app.sh' --name api-gateway  -n ${DEV_PROJECT}"
+        sh "cp api-gateway/target/api-gateway.jar api-gateway/target/ROOT.jar"
         script {
           openshift.withCluster() {
             openshift.withProject(env.DEV_PROJECT) {

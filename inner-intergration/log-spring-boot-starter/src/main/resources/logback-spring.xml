@@ -114,8 +114,8 @@
 	 -->
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="ERROR"/>
+        <!--<appender-ref ref="ERROR"/>
         <appender-ref ref="INFO"/>
-        <!-- <appender-ref ref="SENTRY" /> -->
+         <appender-ref ref="SENTRY" /> -->
     </root>
 </configuration>
