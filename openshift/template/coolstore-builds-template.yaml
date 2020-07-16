@@ -1,0 +1,303 @@
+apiVersion: v1
+kind: Template
+labels:
+  demo: coolstore-microservice
+metadata:
+  annotations:
+    description: opencapacity demo microservices application buildconfigs template
+    iconClass: icon-java
+    tags: microservice,jboss,spring
+  name: opencapacity-builds
+objects:
+# opencapacity Gateway
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: coolstore-gw
+    labels:
+      comp-required: "true"
+      app: coolstore-gw
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: coolstore-gw
+    labels:
+      comp-required: "true"
+      app: coolstore-gw
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: coolstore-gw:latest
+    source:
+      contextDir: api-gateway
+      git:
+        ref: ${GIT_REF}
+        uri: ${GIT_URI}
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+        - name: MAVEN_ARGS
+          value: package -DskipTests 
+        - name: MAVEN_MIRROR_URL
+          value: ${MAVEN_MIRROR_URL}
+        forcePull: false
+        from:
+          kind: ImageStreamTag
+          namespace: openshift
+          name: fis-java-openshift:2.0
+      type: Source
+    resources:
+      limits:
+        cpu: 500m
+        memory: "2Gi"
+      requests:
+        cpu: "200m"
+        memory: "1Gi"
+# Inventory Service
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: inventory
+    labels:
+      app: inventory
+  spec:
+    tags:
+    - name: latest
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: inventory
+    labels:
+      app: inventory
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: inventory:latest
+    source:
+      contextDir: business-center/user-center
+      git:
+        ref: ${GIT_REF}
+        uri: ${GIT_URI}
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+        - name: MAVEN_MIRROR_URL
+          value: ${MAVEN_MIRROR_URL}
+        forcePull: false
+        from:
+          kind: ImageStreamTag
+          name: jboss-eap70-openshift:1.5
+          namespace: openshift
+      type: Source
+    resources:
+      limits:
+        cpu: 1
+        memory: "2Gi"
+      requests:
+        cpu: "200m"
+        memory: "1Gi"
+# Catalog Service
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: catalog
+    labels:
+      comp-required: "true"
+      app: catalog
+  spec:
+    tags:
+    - name: latest
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: catalog
+    labels:
+      comp-required: "true"
+      app: catalog
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: catalog:latest
+    source:
+      contextDir: business-center/workflow-center
+      git:
+        ref: ${GIT_REF}
+        uri: ${GIT_URI}
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+        - name: MAVEN_MIRROR_URL
+          value: ${MAVEN_MIRROR_URL}
+        forcePull: false
+        from:
+          kind: ImageStreamTag
+          name: jboss-webserver31-tomcat8-openshift:1.0
+          namespace: openshift
+      type: Source
+    resources:
+      limits:
+        cpu: 500m
+        memory: "2Gi"
+      requests:
+        cpu: "200m"
+        memory: "1Gi"
+# Cart Service
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: cart
+    labels:
+      app: cart
+  spec:
+    tags:
+    - name: latest
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: cart
+    labels:
+      app: cart
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: cart:latest
+    source:
+      contextDir: oauth-center/auth-server
+      git:
+        ref: ${GIT_REF}
+        uri: ${GIT_URI}
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+        - name: MAVEN_MIRROR_URL
+          value: ${MAVEN_MIRROR_URL}
+        from:
+          kind: ImageStreamTag
+          namespace: openshift
+          name: redhat-openjdk18-openshift:1.1
+      type: Source
+    resources:
+      limits:
+        cpu: 500m
+        memory: "2Gi"
+      requests:
+        cpu: "200m"
+        memory: "1Gi"
+# Pricing Rules Service
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: pricing
+    labels:
+      app: pricing
+  spec:
+    tags:
+    - name: latest
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: pricing
+    labels:
+      app: pricing
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: pricing:latest
+    source:
+      contextDir: oauth-center/auth-sso
+      git:
+        ref: ${GIT_REF}
+        uri: ${GIT_URI}
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+        - name: KIE_CONTAINER_DEPLOYMENT
+          value: ${KIE_CONTAINER_DEPLOYMENT}
+        - name: MAVEN_MIRROR_URL
+          value: ${MAVEN_MIRROR_URL}
+        from:
+          kind: ImageStreamTag
+          name: jboss-decisionserver64-openshift:1.0
+          namespace: openshift
+      type: Source
+    resources:
+      limits:
+        cpu: 500m
+        memory: "2Gi"
+      requests:
+        cpu: "200m"
+        memory: "1Gi"
+# Rating service
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: rating
+    labels:
+      app: rating
+  spec:
+    tags:
+    - name: latest
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: rating
+    labels:
+      app: rating
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: rating:latest
+    source:
+      contextDir: rating-service
+      git:
+        ref: ${GIT_REF}
+        uri: ${GIT_URI}
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+        - name: MAVEN_MIRROR_URL
+          value: ${MAVEN_MIRROR_URL}
+        from:
+          kind: ImageStreamTag
+          name: redhat-openjdk18-openshift:1.1
+          namespace: openshift
+      type: Source
+
+parameters:
+- description: Git source URI for application
+  displayName: Git source repository
+  name: GIT_URI
+  required: true
+  value: https://github.com/woyaofuwu/open-capacity-f
+- description: Git branch/tag reference
+  displayName: Git branch/tag reference
+  name: GIT_REF
+  required: true
+  value: 2.0.1
+- description: Maven mirror url. If nexus is deployed locally, use nexus url (e.g. http://nexus-cicd-andrew.apps.c918.example.opentlc.com/repository/maven-all-public/)
+  displayName: Maven mirror url
+  name: MAVEN_MIRROR_URL
+- description: NPM mirror url. If nexus is deployed locally, use nexus url (e.g. http://nexus.ci:8081/repository/npm/)
+  displayName: NPM mirror url
+  name: NPM_MIRROR
+- description: Bower mirror url. If nexus is deployed locally, use nexus url (e.g. http://nexus.ci:8081/repository/bower-mirror/)
+  displayName: Bower mirror url
+  name: BOWER_MIRROR
+- description: Decision Server Coolstore Rules Container Spec
+  name: KIE_CONTAINER_DEPLOYMENT
+  required: true
+  value: CoolStoreRulesContainer=com.redhat:coolstore:2.0.0

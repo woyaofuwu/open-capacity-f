@@ -1,0 +1,193 @@
+apiVersion: v1
+kind: Template
+labels:
+  demo: coolstore-microservice
+metadata:
+  annotations:
+    description: CoolStore demo microservices deployments persistent template
+    iconClass: icon-java
+    tags: microservice,jboss,spring
+  name: coolstore-deployments
+objects:
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    name: default_edit
+  roleRef:
+    name: view
+  subjects:
+  - kind: ServiceAccount
+    name: default
+# Coolstore Gateway
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: eureka-server
+    labels:
+      app: eureka-server
+      comp-required: "true"
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: eureka-server
+    strategy:
+      resources: {}
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: eureka-server
+          deploymentconfig: eureka-server
+        name: eureka-server
+      spec:
+        containers:
+        - env:
+          - name: KUBERNETES_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: CART_ENDPOINT
+            value: cart-${HOSTNAME_SUFFIX}
+          - name: INVENTORY_ENDPOINT
+            value: inventory-${HOSTNAME_SUFFIX}
+          - name: CATALOG_ENDPOINT
+            value: catalog-${HOSTNAME_SUFFIX}
+          - name: RATING_ENDPOINT
+            value: rating-${HOSTNAME_SUFFIX}
+          image: library/eureka-server:${APP_VERSION}
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - '-f'
+                - 'http://localhost:8081/health'
+            initialDelaySeconds: 30
+            failureThreshold: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          name: eureka-server
+          ports:
+          - containerPort: 8778
+            name: jolokia
+          readinessProbe:
+            exec:
+              command:
+                - curl
+                - '-f'
+                - 'http://localhost:8081/health'
+            initialDelaySeconds: 30
+            failureThreshold: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 1
+              memory: 2Gi
+            requests:
+              cpu: 200m
+              memory: 512Mi
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - eureka-server
+        from:
+          kind: ImageStreamTag
+          name: eureka-server:${APP_VERSION}
+      type: ImageChange
+    - type: ConfigChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: eureka-server
+      hystrix.enabled: "true"
+      comp-required: "true"
+    name: eureka-server
+  spec:
+    ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      deploymentconfig: eureka-server
+- apiVersion: v1
+  kind: Route
+  metadata:
+    name: eureka-server
+    labels:
+      app: eureka-server
+      comp-required: "true"
+  spec:
+    host: eureka-server-${HOSTNAME_SUFFIX}
+    to:
+      kind: Service
+      name: eureka-server
+parameters:
+- description: CoolStore application image version to be deployed (imagestreams should exist)
+  displayName: CoolStore image version
+  name: APP_VERSION
+  required: true
+  value: latest
+- description: Hostname suffix used for routes e.g. cart-<HOSTNAME_SUFFIX> inventory-<HOSTNAME_SUFFIX>
+  displayName: Hostname suffix used for routes
+  name: HOSTNAME_SUFFIX
+  required: true
+- description: Inventory Service database user name
+  from: user[a-zA-Z0-9]{3}
+  generate: expression
+  name: INVENTORY_DB_USERNAME
+  required: true
+- description: Inventory Service database user password
+  from: '[a-zA-Z0-9]{8}'
+  generate: expression
+  name: INVENTORY_DB_PASSWORD
+  required: true
+- description: Catalog Service database user name
+  from: user[a-zA-Z0-9]{3}
+  generate: expression
+  name: CATALOG_DB_USERNAME
+  required: true
+- description: Catalog Service database user password
+  from: '[a-zA-Z0-9]{8}'
+  generate: expression
+  name: CATALOG_DB_PASSWORD
+  required: true
+- description: Decision Server Username
+  name: KIE_SERVER_USER
+  required: true
+  value: brmsAdmin
+- description: Decision Server Password
+  from: '[a-zA-Z]{6}[0-9]{1}!'
+  generate: expression
+  name: KIE_SERVER_PASSWORD
+  required: true
+- description: Decision Server Coolstore Rules Container Spec
+  name: KIE_CONTAINER_DEPLOYMENT
+  required: true
+  value: CoolStoreRulesContainer=com.redhat:coolstore:2.0.0
+- description: Rating Service database user name
+  displayName: Rating Database username
+  from: user[a-zA-Z0-9]{3}
+  generate: expression
+  name: RATING_DB_USERNAME
+  required: true
+- description: Rating Service database user password
+  displayName: Rating Database password
+  from: '[a-zA-Z0-9]{8}'
+  generate: expression
+  name: RATING_DB_PASSWORD
+  required: true
+- description: Review Service database user name
+  displayName: Review Database username
+  from: user[a-zA-Z0-9]{3}
+  generate: expression
+  name: REVIEW_DB_USERNAME
+  required: true
+- description: Review Service database user password
+  displayName: Review Database password
+  from: '[a-zA-Z0-9]{8}'
+  generate: expression
+  name: REVIEW_DB_PASSWORD
+  required: true

@@ -243,7 +243,20 @@ objects:
             # adjust jenkins 
            
             # setup dev env
-            
+            oc import-image openjdk8-alpine --from=openjdk:8-jdk-alpine --confirm -n ${DEV_PROJECT} 
+
+             # dev
+            oc new-build --name=opencapacity-eureka --strategy=source --image-stream=openjdk8-alpine:latest --binary=true -n ${DEV_PROJECT}
+            oc new-app opencapacity-eureka:latest --allow-missing-images -n ${DEV_PROJECT}
+            oc set triggers dc -l app=opencapacity-eureka --containers=opencapacity-eureka --from-image=opencapacity-eureka:latest --manual -n ${DEV_PROJECT}
+
+            oc import-image  ubijava8 --from=docker.io/robin9999/ubijava8:1.0 --confirm --insecure
+
+            oc new-build --name=tasks --strategy=source --image-stream=ubijava8:latest --binary=true -n ${DEV_PROJECT}
+            oc new-app tasks:latest --allow-missing-images -n ${DEV_PROJECT}
+            oc set triggers dc -l app=tasks --containers=tasks --from-image=ubijava8:latest --manual -n ${DEV_PROJECT}
+
+            ubijava8 
             # dev project
             # oc expose dc/tasks --port=8080 -n ${DEV_PROJECT}
             # oc expose svc/tasks -n ${DEV_PROJECT}

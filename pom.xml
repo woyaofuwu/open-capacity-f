@@ -51,8 +51,8 @@
         <disruptor.version>3.4.1</disruptor.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <docker.host>http://59.110.164.254:5555</docker.host>
-        <docker.image.prefix>owenwangwen</docker.image.prefix>
+        <docker.host>docker-registry.default.svc:5000/</docker.host>
+        <docker.image.prefix></docker.image.prefix>
         <spring-boot.version>2.1.15.RELEASE</spring-boot.version>
         <spring-platform.version>Cairo-SR3</spring-platform.version>
         <spring.social.version>1.1.6.RELEASE</spring.social.version>
@@ -266,7 +266,25 @@
             </snapshots>
         </repository>
     </repositories>
+	<distributionManagement>
+		<repository>
+			<id>maven-releases</id>
+			<url>http://nexus:8081/repository/maven-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>maven-snapshots</id>
+			<url>http://nexus:8081/repository/maven-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 	<!--
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<name>releases</name>
+			<url>http://nexus:8081/repository/maven-all-public/</url>  
+		</repository>
+	</distributionManagement>
+	
 
 	<distributionManagement>
         <repository>
@@ -323,67 +341,7 @@
             <id>01</id>
             <name>gitgeek</name>
             <email>986969368@qq.com</email>
-        </developer>
-        <developer>
-            <id>02</id>
-            <name>someday</name>
-            <email>842695235@qq.com</email>
-        </developer>
-        <developer>
-            <id>03</id>
-            <name>caoheyang911016</name>
-            <email>328690901@qq.com</email>
-        </developer>
-        <developer>
-            <id>04</id>
-            <name>Binary</name>
-            <email>154232101@qq.com</email>
-        </developer>
-        <developer>
-            <id>05</id>
-            <name>financeyuan</name>
-            <email>2478412512@qq.com</email>
-        </developer>
-        <developer>
-            <id>06</id>
-            <name>1758783856</name>
-            <email>1758783856@qq.com</email>
-        </developer>
-        <developer>
-            <id>07</id>
-            <name>68335397</name>
-            <email>68335397@qq.com</email>
-        </developer>
-        <developer>
-            <id>08</id>
-            <name>415213294</name>
-            <email>415213294@qq.com</email>
-        </developer>
-        <developer>
-            <id>09</id>
-            <name>573059382</name>
-            <email>573059382@qq.com</email>
-        </developer>
-        <developer>
-            <id>10</id>
-            <name>dawei</name>
-            <email>phone:15098899951 area:jinan email:64738479@qq.com</email>
-        </developer>
-        <developer>
-            <id>11</id>
-            <name>pm</name>
-            <email>1280415703@qq.com</email>
-        </developer>
-        <developer>
-            <id>12</id>
-            <name>finally</name>
-            <email>1363946966@qq.com</email>
-        </developer>
-        <developer>
-            <id>13</id>
-            <name>adonis</name>
-            <email>1977334800@qq.com</email>
-        </developer>
+        </developer>      
     </developers>
 
 </project>

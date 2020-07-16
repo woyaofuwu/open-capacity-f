@@ -22,7 +22,7 @@ pipeline {
     }
     /**stage('Archive App') {
       steps {
-        sh "${mvnCmd} deploy -DskipTests=true -P nexus3"
+        sh "${mvnCmd} deploy -DskipTests=true "//-P nexus3 20200716 pom.xml settings.xml 配置调整后可以deploy
       }
     }**/
     stage('Build eureka-server Image') {
