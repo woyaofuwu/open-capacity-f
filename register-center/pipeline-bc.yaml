@@ -29,95 +29,53 @@ spec:
         - name: ENABLE_QUAY
           value: 'false'
       jenkinsfile: |-
-        def mvnCmd = "mvn -s configuration/cicd-settings-nexus3.xml"
-
-        pipeline {
-          agent {
-            label 'maven'
-          }
-          stages {
-            stage('Build App') {
-              steps {
-                git branch: 'eap-7', url: 'http://gogs:3000/gogs/openshift-tasks.git'
-                sh "${mvnCmd} install -DskipTests=true"
-              }
-            }
-            stage('Test') {
-              steps {
-                sh "${mvnCmd} test"
-                step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
-              }
-            }
-            stage('Code Analysis') {
-              steps {
-                script {
-                  sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube:9000 -DskipTests=true"
-                }
-              }
-            }
-            stage('Archive App') {
-              steps {
-                sh "${mvnCmd} deploy -DskipTests=true -P nexus3"
-              }
-            }
-            stage('Build Image') {
-              steps {
-                sh "cp target/openshift-tasks.war target/ROOT.war"
-                script {
-                  openshift.withCluster() {
-                    openshift.withProject(env.DEV_PROJECT) {
-                      openshift.selector("bc", "tasks").startBuild("--from-file=target/ROOT.war", "--wait=true")
-                    }
-                  }
-                }
-              }
-            }
-            stage('Deploy DEV') {
-              steps {
-                script {
-                  openshift.withCluster() {
-                    openshift.withProject(env.DEV_PROJECT) {
-                      openshift.selector("dc", "tasks").rollout().latest();
-                    }
-                  }
-                }
-              }
-            }
-            stage('Promote to STAGE?') {
+        def mvnCmd = "mvn -s cicd-settings-nexus3.xml"                  
+            def mvnCmd1 = "mvn -s ../cicd-settings-nexus3.xml"
+            def mvnCmd2 = "mvn -s ../../cicd-settings-nexus3.xml"
+            pipeline {
               agent {
-                label 'skopeo'
+                label 'maven'
               }
-              steps {
-                timeout(time:15, unit:'MINUTES') {
-                    input message: "Promote to STAGE?", ok: "Promote"
+              stages {
+                stage('Build App') {
+                  steps {
+                    git branch: '2.0.1', url: 'https://github.com/woyaofuwu/open-capacity-f'                
+                    sh "${mvnCmd} clean install package -DskipTests"
+                  }
                 }
-
-                script {
-                  openshift.withCluster() {
-                    if (env.ENABLE_QUAY.toBoolean()) {
-                      withCredentials([usernamePassword(credentialsId: "${openshift.project()}-quay-cicd-secret", usernameVariable: "QUAY_USER", passwordVariable: "QUAY_PWD")]) {
-                        sh "skopeo copy docker://quay.io//tasks-app:latest docker://quay.io//tasks-app:stage --src-creds \"$QUAY_USER:$QUAY_PWD\" --dest-creds \"$QUAY_USER:$QUAY_PWD\" --src-tls-verify=false --dest-tls-verify=false"
+                
+                stage('Code Analysis') {
+                  steps {
+                    script {
+                      sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube:9000 -DskipTests=true"
+                    }
+                  }
+                }
+                /**stage('Archive App') {
+                  steps {
+                    sh "${mvnCmd} deploy -DskipTests=true "//-P nexus3 20200716 pom.xml settings.xml 配置调整后可以deploy
+                  }
+                }**/
+                stage('Build eureka-server Image') {
+                  steps {
+                      sh " cd register-center/eureka-server/target && dir"
+                       sh " cp register-center/eureka-server/target/eureka-server.jar target/ROOT.jar"
+                    //sh "cd register-center/eureka-server && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
+                    //sh t"cd oauth-center/auth-server && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
+                    //sh "cd oauth-cener/auth-sso && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
+                    //sh "cd api-gateway && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
+                   // sh "cd new-api-gateway && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
+                    script {
+                      openshift.withCluster() {
+                        openshift.withProject(env.DEV_PROJECT) {
+                          openshift.selector("bc", "opencapacity-eureka").startBuild("--from-file=target/ROOT.jar", "--wait=true")
+                        }
                       }
-                    } else {
-                      openshift.tag("${env.DEV_PROJECT}/tasks:latest", "${env.STAGE_PROJECT}/tasks:stage")
                     }
                   }
                 }
               }
             }
-            stage('Deploy STAGE') {
-              steps {
-                script {
-                  openshift.withCluster() {
-                    openshift.withProject(env.STAGE_PROJECT) {
-                      openshift.selector("dc", "tasks").rollout().latest();
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
     type: JenkinsPipeline
   successfulBuildsHistoryLimit: 5
   triggers:
