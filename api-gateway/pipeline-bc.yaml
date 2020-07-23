@@ -4,11 +4,11 @@ metadata:
   annotations:
     pipeline.alpha.openshift.io/uses: '[{"name": "jenkins", "namespace": "", "kind": "DeploymentConfig"}]'
   labels:
-    app: eureka-pipeline
+    app: api-gateway-pipeline
     group: cicd
-    name: eureka-pipeline
+    name: api-gateway-pipeline
     template: cicd
-  name: eureka-pipeline
+  name: api-gateway-pipeline
   namespace: cicd-andrew
 spec:
   failedBuildsHistoryLimit: 5
@@ -56,20 +56,18 @@ spec:
                     sh "${mvnCmd} deploy -DskipTests=true "//-P nexus3 20200716 pom.xml settings.xml 配置调整后可以deploy
                   }
                 }**/
-                stage('Build eureka-server Image') {
-                  steps {
-                      sh " cd register-center/eureka-server/target && dir"
-                   //    sh " cp register-center/eureka-server/target/eureka-server.jar target/ROOT.jar"
+                stage('Build user-server Image') {
+                  steps {                   
                     //sh "cd register-center/eureka-server && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
                     //sh t"cd oauth-center/auth-server && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
-                    //sh "cd oauth-cener/auth-sso && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
+                    //sh "cd oauth-center/auth-sso && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
                     //sh "cd api-gateway && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
                    // sh "cd new-api-gateway && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
                     script {
                       openshift.withCluster() {
                         openshift.withProject(env.DEV_PROJECT) {
-                          openshift.selector("bc", "eureka-server").startBuild("--from-file=register-center/eureka-server/target/eureka-server.jar", "--wait=true")
-                        }
+                          openshift.selector("bc", "api-gateway").startBuild("--from-file=api-gateway/target/api-gateway.jar", "--wait=true")            
+                          }
                       }
                     }
                   }

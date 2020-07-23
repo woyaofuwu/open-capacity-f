@@ -4,11 +4,11 @@ metadata:
   annotations:
     pipeline.alpha.openshift.io/uses: '[{"name": "jenkins", "namespace": "", "kind": "DeploymentConfig"}]'
   labels:
-    app: eureka-pipeline
+    app: business-pipeline
     group: cicd
-    name: eureka-pipeline
+    name: business-pipeline
     template: cicd
-  name: eureka-pipeline
+  name: business-pipeline
   namespace: cicd-andrew
 spec:
   failedBuildsHistoryLimit: 5
@@ -56,10 +56,8 @@ spec:
                     sh "${mvnCmd} deploy -DskipTests=true "//-P nexus3 20200716 pom.xml settings.xml 配置调整后可以deploy
                   }
                 }**/
-                stage('Build eureka-server Image') {
-                  steps {
-                      sh " cd register-center/eureka-server/target && dir"
-                   //    sh " cp register-center/eureka-server/target/eureka-server.jar target/ROOT.jar"
+                stage('Build user-server Image') {
+                  steps {                   
                     //sh "cd register-center/eureka-server && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
                     //sh t"cd oauth-center/auth-server && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
                     //sh "cd oauth-cener/auth-sso && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
@@ -68,7 +66,9 @@ spec:
                     script {
                       openshift.withCluster() {
                         openshift.withProject(env.DEV_PROJECT) {
-                          openshift.selector("bc", "eureka-server").startBuild("--from-file=register-center/eureka-server/target/eureka-server.jar", "--wait=true")
+                          openshift.selector("bc", "user-cener").startBuild("--from-file=business-cener/user-cener/target/user-cener.jar", "--wait=true")            
+                          openshift.selector("bc", "file-cener").startBuild("--from-file=business-cener/file-cener/target/file-cener.jar", "--wait=true")                          
+                          openshift.selector("bc", "sms-cener").startBuild("--from-file=business-cener/sms-cener/target/sms-cener.jar", "--wait=true")                                        
                         }
                       }
                     }

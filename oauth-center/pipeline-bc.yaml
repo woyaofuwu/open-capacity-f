@@ -4,11 +4,11 @@ metadata:
   annotations:
     pipeline.alpha.openshift.io/uses: '[{"name": "jenkins", "namespace": "", "kind": "DeploymentConfig"}]'
   labels:
-    app: eureka-pipeline
+    app: auth-pipeline
     group: cicd
-    name: eureka-pipeline
+    name: auth-pipeline
     template: cicd
-  name: eureka-pipeline
+  name: auth-pipeline
   namespace: cicd-andrew
 spec:
   failedBuildsHistoryLimit: 5
@@ -56,10 +56,8 @@ spec:
                     sh "${mvnCmd} deploy -DskipTests=true "//-P nexus3 20200716 pom.xml settings.xml 配置调整后可以deploy
                   }
                 }**/
-                stage('Build eureka-server Image') {
-                  steps {
-                      sh " cd register-center/eureka-server/target && dir"
-                   //    sh " cp register-center/eureka-server/target/eureka-server.jar target/ROOT.jar"
+                stage('Build user-server Image') {
+                  steps {                   
                     //sh "cd register-center/eureka-server && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
                     //sh t"cd oauth-center/auth-server && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
                     //sh "cd oauth-cener/auth-sso && ${mvnCmd2} docker:build -Dfabric8.namespace=dev-open-capacity "
@@ -68,7 +66,8 @@ spec:
                     script {
                       openshift.withCluster() {
                         openshift.withProject(env.DEV_PROJECT) {
-                          openshift.selector("bc", "eureka-server").startBuild("--from-file=register-center/eureka-server/target/eureka-server.jar", "--wait=true")
+                          openshift.selector("bc", "auth-server").startBuild("--from-file= oauth-center/auth-server/target/auth-server.jar", "--wait=true")            
+                          openshift.selector("bc", "auth-sso").startBuild("--from-file=oauth-center/auth-sso/target/auth-sso.jar", "--wait=true")                                                    
                         }
                       }
                     }
